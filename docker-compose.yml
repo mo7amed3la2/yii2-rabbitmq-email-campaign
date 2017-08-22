@@ -1,0 +1,26 @@
+version: '3'
+services:
+  php:
+    build: "./docker/php"
+    volumes:
+      - ".:/var/www"
+    working_dir: "/var/www"
+
+  nginx:
+    build: "./docker/nginx"
+    ports:
+      - "80:80"
+    volumes:
+      - ".:/var/www"
+
+  rabbitmq:
+    build: "./docker/rabbitmq"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_USER: "rabbitmq"
+      RABBITMQ_PASS: "rabbitmq"
+
+volumes:
+  mysql_data:
