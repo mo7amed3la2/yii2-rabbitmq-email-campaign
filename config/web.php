@@ -1,7 +1,8 @@
 <?php
 
+use yii\di\Instance;
+
 $params = require(__DIR__ . '/params.php');
-$db = require(__DIR__ . '/db.php');
 
 $config = [
     'id' => 'basic',
@@ -38,15 +39,12 @@ $config = [
                 ],
             ],
         ],
-        'db' => $db,
-        /*
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-            ],
-        ],
-        */
+        'rabbitmq' => require(__DIR__ . '/rabbitmq.php'),
+    ],
+    'container' => require(__DIR__ . '/services.php'),
+    'controllerMap' => [
+        'rabbitmq-consumer' => \mikemadisonweb\rabbitmq\controllers\ConsumerController::class,
+        'rabbitmq-producer' => \mikemadisonweb\rabbitmq\controllers\ProducerController::class,
     ],
     'params' => $params,
 ];

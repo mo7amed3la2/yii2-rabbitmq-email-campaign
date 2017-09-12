@@ -1,7 +1,6 @@
 <?php
 
 $params = require(__DIR__ . '/params.php');
-$db = require(__DIR__ . '/db.php');
 
 $config = [
     'id' => 'basic-console',
@@ -20,16 +19,14 @@ $config = [
                 ],
             ],
         ],
-        'db' => $db,
+        'rabbitmq' => require(__DIR__ . '/rabbitmq.php'),
+    ],
+    'container' => require(__DIR__ . '/services.php'),
+    'controllerMap' => [
+        'rabbitmq-consumer' => \mikemadisonweb\rabbitmq\controllers\ConsumerController::class,
+        'rabbitmq-producer' => \mikemadisonweb\rabbitmq\controllers\ProducerController::class,
     ],
     'params' => $params,
-    /*
-    'controllerMap' => [
-        'fixture' => [ // Fixture generation command line.
-            'class' => 'yii\faker\FixtureController',
-        ],
-    ],
-    */
 ];
 
 if (YII_ENV_DEV) {

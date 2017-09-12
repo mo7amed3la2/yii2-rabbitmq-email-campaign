@@ -2,7 +2,7 @@ server {
     charset      utf-8;
     listen       80; # listen for IPv4
     server_name  localhost;
-    root         /var/www/frontend/web;
+    root         /var/www/web;
 
     location / {
         try_files $uri /index.php?$args;
