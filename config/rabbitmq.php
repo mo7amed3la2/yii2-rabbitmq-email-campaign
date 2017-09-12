@@ -37,4 +37,16 @@ return [
             'callback' => 'rabbitmq.import-data.consumer',
         ],
     ],
+    'on before_consume' => function ($event) {
+        echo "before_consume!\n";
+    },
+    'on after_consume' => function ($event) {
+        echo "after_consume!\n";
+    },
+    'on before_publish' => function ($event) {
+        echo "before_publish!\n";
+    },
+    'on after_publish' => function ($event) {
+        echo "after_publish!\n";
+    },
 ];

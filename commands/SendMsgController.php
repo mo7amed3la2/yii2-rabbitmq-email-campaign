@@ -24,7 +24,6 @@ class SendMsgController extends Controller
         $producer = \Yii::$container->get(sprintf('rabbit_mq.producer.%s', 'import_data'));
         $msg = serialize([$this->message]);
         while (true) {
-            echo $this->message . "\n";
             $producer->publish($msg, 'import_data');
             sleep(1);
         }

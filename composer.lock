@@ -320,12 +320,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikemadisonweb/yii2-rabbitmq.git",
-                "reference": "73fc8372df43f16a306c42bfecc234f58f44d5b8"
+                "reference": "769b45141f6fe84dc7d85603455964e347d7a371"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikemadisonweb/yii2-rabbitmq/zipball/73fc8372df43f16a306c42bfecc234f58f44d5b8",
-                "reference": "73fc8372df43f16a306c42bfecc234f58f44d5b8",
+                "url": "https://api.github.com/repos/mikemadisonweb/yii2-rabbitmq/zipball/769b45141f6fe84dc7d85603455964e347d7a371",
+                "reference": "769b45141f6fe84dc7d85603455964e347d7a371",
                 "shasum": ""
             },
             "require": {
@@ -358,7 +358,7 @@
                 "rabbitmq",
                 "yii2"
             ],
-            "time": "2017-09-12T09:42:43+00:00"
+            "time": "2017-09-12T09:49:53+00:00"
         },
         {
             "name": "php-amqplib/php-amqplib",
