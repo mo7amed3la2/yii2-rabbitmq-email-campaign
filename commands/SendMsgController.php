@@ -2,6 +2,7 @@
 
 namespace app\commands;
 
+use mikemadisonweb\rabbitmq\Configuration;
 use yii\console\Controller;
 
 class SendMsgController extends Controller
@@ -18,14 +19,12 @@ class SendMsgController extends Controller
         return ['m' => 'message'];
     }
 
-    public function actionPublish()
+    public function actionPublish($period = 1)
     {
-        \Yii::$app->rabbitmq->load();
-        $producer = \Yii::$container->get(sprintf('rabbit_mq.producer.%s', 'import_data'));
-        $msg = serialize([$this->message]);
+        $producer = \Yii::$container->get(sprintf(Configuration::PRODUCER_SERVICE_NAME, 'import'));
         while (true) {
-            $producer->publish($msg, 'import_data');
-            sleep(1);
+            $producer->publish($this->message, 'import', 'import');
+            sleep($period);
         }
     }
 }

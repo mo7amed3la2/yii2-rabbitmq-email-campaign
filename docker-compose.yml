@@ -9,7 +9,7 @@ services:
   nginx:
     build: "./docker/nginx"
     ports:
-      - "8000:80"
+      - "8181:80"
     volumes:
       - ".:/var/www"
 

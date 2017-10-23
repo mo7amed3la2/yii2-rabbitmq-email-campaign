@@ -2,39 +2,47 @@
 
 return [
     'class' => \mikemadisonweb\rabbitmq\Configuration::class,
+    //'autoDeclare' => false,
     'connections' => [
-        'default' => [
-            'host' => '127.0.0.1',
+        [
+            'host' => 'rabbitmq',
             'port' => '5672',
             'user' => 'rabbitmq',
             'password' => 'rabbitmq',
             'vhost' => '/',
             'heartbeat' => 0,
+        ]
+    ],
+    'exchanges' => [
+        [
+            'name' => 'import',
+            'type' => 'direct'
+        ],
+    ],
+    'queues' => [
+        [
+            'name' => 'import',
+            'durable' => true,
+        ],
+    ],
+    'bindings' => [
+        [
+            'queue' => 'import',
+            'exchange' => 'import',
+            'routingKeys' => ['import'],
         ],
     ],
     'producers' => [
-        'import_data' => [
-            'connection' => 'default',
-            'exchange_options' => [
-                'name' => 'import_data',
-                'type' => 'direct',
-            ],
+        [
+            'name' => 'import',
         ],
     ],
     'consumers' => [
-        'import_data' => [
-            'connection' => 'default',
-            'exchange_options' => [
-                'name' => 'import_data', // Name of exchange to declare
-                'type' => 'direct', // Type of exchange
+        [
+            'name' => 'import',
+            'callbacks' => [
+                'import' => 'rabbitmq.import-data.consumer'
             ],
-            'queue_options' => [
-                'name' => 'import_data', // Queue name which will be binded to the exchange adove
-                'routing_keys' => ['import_data'], // Your custom options
-                'durable' => true,
-                'auto_delete' => false,
-            ],
-            'callback' => 'rabbitmq.import-data.consumer',
         ],
     ],
     'on before_consume' => function ($event) {
