@@ -2,7 +2,6 @@
 
 return [
     'class' => \mikemadisonweb\rabbitmq\Configuration::class,
-    //'autoDeclare' => false,
     'connections' => [
         [
             'host' => 'rabbitmq',
@@ -16,7 +15,7 @@ return [
     'exchanges' => [
         [
             'name' => 'import',
-            'type' => 'direct'
+            'type' => 'fanout'
         ],
     ],
     'queues' => [
@@ -29,7 +28,6 @@ return [
         [
             'queue' => 'import',
             'exchange' => 'import',
-            'routingKeys' => ['import'],
         ],
     ],
     'producers' => [

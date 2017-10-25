@@ -2,6 +2,7 @@
 
 namespace app\commands;
 
+use mikemadisonweb\rabbitmq\components\ConsumerInterface;
 use mikemadisonweb\rabbitmq\Configuration;
 use yii\console\Controller;
 

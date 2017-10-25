@@ -4,6 +4,7 @@ namespace mikemadisonweb\rabbitmq\components;
 
 use mikemadisonweb\rabbitmq\Configuration;
 use mikemadisonweb\rabbitmq\events\RabbitMQPublisherEvent;
+use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
 
@@ -68,12 +69,12 @@ class Producer extends BaseRabbitMQ
      * @param string $exchangeName
      * @param string $routingKey
      * @param array $headers
+     * @throws \RuntimeException
      */
     public function publish($msgBody, string $exchangeName, string $routingKey = '', array $headers = null)
     {
         if ($this->autoDeclare) {
-            $routing = \Yii::$container->get(Configuration::ROUTING_SERVICE_NAME);
-            $routing->declareAll($this->conn);
+            $this->routing->declareAll($this->conn);
         }
         if (!is_string($msgBody)) {
             $msgBody = call_user_func($this->serializer, $msgBody);
@@ -96,15 +97,14 @@ class Producer extends BaseRabbitMQ
             'producer' => $this,
         ]));
 
-        if ($this->logger['enable']) {
-            \Yii::info([
-                'info' => 'AMQP message published',
-                'amqp' => [
-                    'body' => $msg->getBody(),
-                    'routing_keys' => $routingKey,
-                    'headers' => $msg->has('application_headers') ? $msg->get('application_headers')->getNativeData() : $headers,
-                ],
-            ], $this->logger['category']);
-        }
+        $this->logger->log(
+            'AMQP message published',
+            $msg,
+            [
+                'exchange' => $exchangeName,
+                'routing_key' => $routingKey,
+
+            ]
+        );
     }
 }

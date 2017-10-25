@@ -2,6 +2,9 @@
 
 namespace mikemadisonweb\rabbitmq;
 
+use mikemadisonweb\rabbitmq\components\Consumer;
+use mikemadisonweb\rabbitmq\components\Producer;
+use mikemadisonweb\rabbitmq\components\Routing;
 use mikemadisonweb\rabbitmq\exceptions\InvalidConfigException;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPLazyConnection;
@@ -14,13 +17,15 @@ class Configuration extends Component
     const CONSUMER_SERVICE_NAME = 'rabbit_mq.consumer.%s';
     const PRODUCER_SERVICE_NAME = 'rabbit_mq.producer.%s';
     const ROUTING_SERVICE_NAME = 'rabbit_mq.routing';
+    const LOGGER_SERVICE_NAME = 'rabbit_mq.logger';
+
     const DEFAULT_CONNECTION_NAME = 'default';
     /**
      * Extension configuration default values
      * @var array
      */
     const DEFAULTS = [
-        'autoDeclare' => true,
+        'auto_declare' => true,
         'connections' => [
             [
                 'name' => self::DEFAULT_CONNECTION_NAME,
@@ -77,8 +82,8 @@ class Configuration extends Component
             [
                 'name' => null,
                 'connection' => self::DEFAULT_CONNECTION_NAME,
-                'contentType' => 'text/plain',
-                'deliveryMode' => 2,
+                'content_type' => 'text/plain',
+                'delivery_mode' => 2,
                 'serializer' => 'json_encode',
             ],
         ],
@@ -98,14 +103,14 @@ class Configuration extends Component
             ],
         ],
         'logger' => [
-            'enable' => true,
+            'log' => false,
             'category' => 'application',
-            'print_console' => false,
+            'print_console' => true,
             'system_memory' => false,
         ],
     ];
 
-    public $autoDeclare = null;
+    public $auto_declare = null;
     public $connections = [];
     public $producers = [];
     public $consumers = [];
@@ -131,6 +136,49 @@ class Configuration extends Component
         }
 
         return $this;
+    }
+
+    /**
+     * Get connection service
+     * @param string $connectionName
+     * @return AbstractConnection
+     */
+    public function getConnection(string $connectionName = '') : AbstractConnection
+    {
+        if ('' === $connectionName) {
+            $connectionName = self::DEFAULT_CONNECTION_NAME;
+        }
+
+        return \Yii::$container->get(sprintf(self::CONNECTION_SERVICE_NAME, $connectionName));
+    }
+
+    /**
+     * Get producer service
+     * @param string $producerName
+     * @return Producer
+     */
+    public function getProducer(string $producerName) : Producer
+    {
+        return \Yii::$container->get(sprintf(self::PRODUCER_SERVICE_NAME, $producerName));
+    }
+
+    /**
+     * Get consumer service
+     * @param string $consumerName
+     * @return Consumer
+     */
+    public function getConsumer(string $consumerName) : Consumer
+    {
+        return \Yii::$container->get(sprintf(self::CONSUMER_SERVICE_NAME, $consumerName));
+    }
+
+    /**
+     * Get routing service
+     * @return Routing
+     */
+    public function getRouting() : Routing
+    {
+        return \Yii::$container->get(self::ROUTING_SERVICE_NAME);
     }
 
     /**
@@ -178,8 +226,8 @@ class Configuration extends Component
      */
     protected function validateTopLevel()
     {
-        if (($this->autoDeclare !== null) && !is_bool($this->autoDeclare)) {
-            throw new InvalidConfigException("Option `autoDeclare` should be of type boolean.");
+        if (($this->auto_declare !== null) && !is_bool($this->auto_declare)) {
+            throw new InvalidConfigException("Option `auto_declare` should be of type boolean.");
         }
 
         if (!is_array($this->logger)) {
@@ -348,8 +396,8 @@ class Configuration extends Component
     protected function completeWithDefaults()
     {
         $defaults = self::DEFAULTS;
-        if (null === $this->autoDeclare) {
-            $this->autoDeclare = $defaults['autoDeclare'];
+        if (null === $this->auto_declare) {
+            $this->auto_declare = $defaults['auto_declare'];
         }
         if (empty($this->logger)) {
             $this->logger = $defaults['logger'];

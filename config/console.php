@@ -22,10 +22,6 @@ $config = [
         'rabbitmq' => require(__DIR__ . '/rabbitmq.php'),
     ],
     'container' => require(__DIR__ . '/services.php'),
-    'controllerMap' => [
-        'rabbitmq-consumer' => \mikemadisonweb\rabbitmq\controllers\ConsumerController::class,
-        'rabbitmq-producer' => \mikemadisonweb\rabbitmq\controllers\ProducerController::class,
-    ],
     'params' => $params,
 ];
 
