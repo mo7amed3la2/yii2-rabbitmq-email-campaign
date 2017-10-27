@@ -13,7 +13,8 @@ class ImportDataConsumer implements ConsumerInterface
      */
     public function execute(AMQPMessage $msg)
     {
-        var_dump($msg->body);
+        sleep(1);
+        var_dump($msg->getBody());
         return ConsumerInterface::MSG_ACK;
     }
 }
