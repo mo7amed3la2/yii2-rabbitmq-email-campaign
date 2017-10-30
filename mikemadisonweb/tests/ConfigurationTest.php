@@ -6,9 +6,6 @@ use mikemadisonweb\rabbitmq\Configuration;
 use mikemadisonweb\rabbitmq\exceptions\InvalidConfigException;
 use yii\base\UnknownPropertyException;
 
-/**
- * @covers Configuration
- */
 class ConfigurationTest extends TestCase
 {
     protected $invalidConfig = [];
@@ -53,6 +50,9 @@ class ConfigurationTest extends TestCase
         \Yii::$app->rabbitmq->getConfig();
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function invalidConfig()
     {
         $required = ['connections' => [['host' => 'localhost']]];

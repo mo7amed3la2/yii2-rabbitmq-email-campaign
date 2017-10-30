@@ -6,6 +6,7 @@ use mikemadisonweb\rabbitmq\components\{
     Consumer, ConsumerInterface, Logger, Routing
 };
 use mikemadisonweb\rabbitmq\Configuration;
+use mikemadisonweb\rabbitmq\events\RabbitMQConsumerEvent;
 use mikemadisonweb\rabbitmq\tests\TestCase;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPLazyConnection;
@@ -45,6 +46,9 @@ class ConsumerTest extends TestCase
         $this->assertSame(Controller::EXIT_CODE_NORMAL, $consumer->consume());
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function checkConsume() : array
     {
         return [
@@ -71,6 +75,65 @@ class ConsumerTest extends TestCase
         $logger = \Yii::$container->get(Configuration::LOGGER_SERVICE_NAME);
         $consumer = new Consumer($connection, $routing, $logger, false);
         $this->assertSame(Controller::EXIT_CODE_NORMAL, $consumer->consume());
+    }
+
+    public function testConsumeEvents()
+    {
+        $queue = 'test-queue';
+        $msgBody = 'Test message!';
+        $consumerName = 'test';
+        $callbackName = 'MockCallback';
+        $callback = $this->getMockBuilder(ConsumerInterface::class)
+            ->setMockClassName($callbackName)
+            ->getMock();
+        $this->loadExtension([
+            'components' => [
+                'rabbitmq' => [
+                    'class' => Configuration::class,
+                    'connections' => [
+                        [
+                            'host' => 'unreal',
+                        ],
+                    ],
+                    'queues' => [
+                        [
+                            'name' => $queue,
+                        ],
+                    ],
+                    'consumers' => [
+                        [
+                            'name' => $consumerName,
+                            'callbacks' => [$queue => $callbackName],
+                        ]
+                    ],
+                    'on before_consume' => function ($event) use ($msgBody) {
+                        $this->assertInstanceOf(RabbitMQConsumerEvent::class, $event);
+                        $this->assertSame($msgBody, $event->message->getBody());
+                    },
+                    'on after_consume' => function ($event) use ($msgBody) {
+                        $this->assertInstanceOf(RabbitMQConsumerEvent::class, $event);
+                        $this->assertSame($msgBody, $event->message->getBody());
+                    },
+                ],
+            ],
+        ]);
+        $connection = $this->getMockBuilder(AMQPLazyConnection::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['channel'])
+            ->getMock();
+        $channel = $this->getMockBuilder(AMQPChannel::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->method('channel')
+            ->willReturn($channel);
+        $logger = $this->createMock(Logger::class);
+        $routing = $this->createMock(Routing::class);
+        $consumer = \Yii::$app->rabbitmq->getConsumer($consumerName);
+        $this->setInaccessibleProperty($consumer, 'routing', $routing);
+        $this->setInaccessibleProperty($consumer, 'conn', $connection);
+        $this->setInaccessibleProperty($consumer, 'logger', $logger);
+        $msg = new AMQPMessage($msgBody);
+        $this->invokeMethod($consumer, 'onReceive', [$msg, $queue, [$callback, 'execute']]);
     }
 
     public function testOnReceive()
@@ -102,8 +165,6 @@ class ConsumerTest extends TestCase
         $routing->expects($this->never())
             ->method('declareAll');
         $logger = $this->createMock(Logger::class);
-        $routing->expects($this->never())
-            ->method('declareAll');
         $consumer = $this->getMockBuilder(Consumer::class)
             ->setConstructorArgs([$connection, $routing, $logger, false])
             ->setMethods(['sendResult'])
@@ -174,6 +235,9 @@ class ConsumerTest extends TestCase
         $this->assertEquals($userData, $msg->getBody());
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function checkMsgTypes() : array
     {
         return [
