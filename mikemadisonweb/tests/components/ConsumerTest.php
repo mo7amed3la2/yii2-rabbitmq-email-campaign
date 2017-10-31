@@ -46,9 +46,6 @@ class ConsumerTest extends TestCase
         $this->assertSame(Controller::EXIT_CODE_NORMAL, $consumer->consume());
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
     public function checkConsume() : array
     {
         return [
@@ -74,6 +71,7 @@ class ConsumerTest extends TestCase
             ->method('declareAll');
         $logger = \Yii::$container->get(Configuration::LOGGER_SERVICE_NAME);
         $consumer = new Consumer($connection, $routing, $logger, false);
+        $consumer->setQos(['prefetch_size' => 0, 'prefetch_count' => 0, 'global' => false]);
         $this->assertSame(Controller::EXIT_CODE_NORMAL, $consumer->consume());
     }
 
@@ -235,9 +233,6 @@ class ConsumerTest extends TestCase
         $this->assertEquals($userData, $msg->getBody());
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
     public function checkMsgTypes() : array
     {
         return [
@@ -248,5 +243,59 @@ class ConsumerTest extends TestCase
             [null],
             [new \StdClass()],
         ];
+    }
+
+    public function testForceStop()
+    {
+        $connection = $this->getMockBuilder(AMQPLazyConnection::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['channel'])
+            ->getMock();
+        $channel = $this->getMockBuilder(AMQPChannel::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $channel->expects($this->once())
+            ->method('basic_cancel');
+        $connection->method('channel')
+            ->willReturn($channel);
+        $routing = $this->createMock(Routing::class);
+        $routing->expects($this->never())
+            ->method('declareAll');
+        $logger = $this->createMock(Logger::class);
+        $consumer = $this->getMockBuilder(Consumer::class)
+            ->setConstructorArgs([$connection, $routing, $logger, false])
+            ->setMethods(['maybeStopConsumer'])
+            ->getMock();
+        $consumer->setQueues(['queue' => 'callback']);
+        $consumer->stopDaemon();
+    }
+
+    public function testForceRestart()
+    {
+        $connection = $this->getMockBuilder(AMQPLazyConnection::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['channel'])
+            ->getMock();
+        $channel = $this->getMockBuilder(AMQPChannel::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $channel->expects($this->once())
+            ->method('basic_cancel');
+        $connection->method('channel')
+            ->willReturn($channel);
+        $routing = $this->createMock(Routing::class);
+        $routing->expects($this->never())
+            ->method('declareAll');
+        $logger = $this->createMock(Logger::class);
+        $consumer = $this->getMockBuilder(Consumer::class)
+            ->setConstructorArgs([$connection, $routing, $logger, false])
+            ->setMethods(['consume'])
+            ->getMock();
+        $consumer->expects($this->once())
+            ->method('consume');
+        $consumer->setQueues(['queue' => 'callback']);
+        $this->setInaccessibleProperty($consumer, 'consumed', 11);
+        $consumer->restartDaemon();
+        $this->assertSame(0, $consumer->getConsumed());
     }
 }

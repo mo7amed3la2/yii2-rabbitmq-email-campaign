@@ -238,7 +238,7 @@ class Consumer extends BaseRabbitMQ
     public function restartDaemon()
     {
         $this->stopConsuming();
-        $this->reconnect();
+        $this->renew();
         $this->resetConsumed();
         $this->logger->printInfo("\nConsumer has been restarted.\n", Console::FG_YELLOW);
         $this->consume($this->target);

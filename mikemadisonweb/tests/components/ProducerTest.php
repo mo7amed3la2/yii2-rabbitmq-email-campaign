@@ -164,9 +164,6 @@ class ProducerTest extends TestCase
         $producer->publish($initial, 'exchange');
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
     public function checkMsgEncoding() : array
     {
         return [
