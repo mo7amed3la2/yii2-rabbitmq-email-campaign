@@ -15,7 +15,7 @@ publish:
 
 consume:
 	@$(call PRINT_INFO, "Yii: Обработка")
-	@docker exec -it --user 1000 yii2rabbitmqtest_php_1 php yii rabbitmq-consumer/multiple import_data
+	@docker exec -it --user 1000 yii2rabbitmqtest_php_1 php yii rabbitmq/consume import
 
 #------------------------------------------------------------------------------
 # VARS

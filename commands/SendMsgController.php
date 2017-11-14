@@ -22,7 +22,7 @@ class SendMsgController extends Controller
 
     public function actionPublish($period = 1)
     {
-        $producer = \Yii::$container->get(sprintf(Configuration::PRODUCER_SERVICE_NAME, 'import'));
+        $producer = \Yii::$app->rabbitmq->getProducer('import');
         while (true) {
             $producer->publish($this->message, 'import', 'import');
             sleep($period);
