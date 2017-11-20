@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1510650882">
-  <project timestamp="1510650882">
+<coverage generated="1511184282">
+  <project timestamp="1511184282">
     <package name="mikemadisonweb\rabbitmq">
       <file name="/mnt/hdd/OwnRepo/yii2-rabbitmq-test/mikemadisonweb/Configuration.php">
         <class name="Configuration" namespace="mikemadisonweb\rabbitmq">

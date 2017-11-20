@@ -12,6 +12,5 @@ nbproject
 # windows thumbnail cache
 Thumbs.db
 
-composer.lock
 vendor
 build
