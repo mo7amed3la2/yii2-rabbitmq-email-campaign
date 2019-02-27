@@ -1,58 +1,71 @@
 <?php
 
 return [
-    'class' => \mikemadisonweb\rabbitmq\Configuration::class,
-    'connections' => [
+    'class'             => \mikemadisonweb\rabbitmq\Configuration::class,
+    'auto_declare'      => false,
+    'connections'       => [
         [
-            'host' => 'rabbitmq',
-            'port' => '5672',
-            'user' => 'rabbitmq',
-            'password' => 'rabbitmq',
-            'vhost' => '/',
+            'host'      => 'rabbitmq',
+            'port'      => '5672',
+            'user'      => 'rabbitmq',
+            'password'  => 'rabbitmq',
+            'vhost'     => '/',
             'heartbeat' => 0,
-        ]
-    ],
-    'exchanges' => [
-        [
-            'name' => 'import',
-            'type' => 'fanout'
         ],
     ],
-    'queues' => [
+    'exchanges'         => [
         [
             'name' => 'import',
+            'type' => 'fanout',
+        ],
+    ],
+    'queues'            => [
+        [
+            'name'    => 'import',
+            'durable' => true,
+        ],
+        [
+            'name'    => 'import2',
+            'durable' => true,
+        ],
+        [
+            'name'    => 'import3',
             'durable' => true,
         ],
     ],
-    'bindings' => [
+    'bindings'          => [
         [
-            'queue' => 'import',
+            'queue'    => 'import',
             'exchange' => 'import',
         ],
     ],
-    'producers' => [
+    'producers'         => [
         [
             'name' => 'import',
         ],
     ],
-    'consumers' => [
+    'consumers'         => [
         [
-            'name' => 'import',
+            'name'      => 'import',
             'callbacks' => [
-                'import' => 'rabbitmq.import-data.consumer'
+                'import' => 'rabbitmq.import-data.consumer',
             ],
         ],
     ],
-    'on before_consume' => function ($event) {
+    'on before_consume' => function ($event)
+    {
         echo "before_consume!\n";
     },
-    'on after_consume' => function ($event) {
+    'on after_consume'  => function ($event)
+    {
         echo "after_consume!\n";
     },
-    'on before_publish' => function ($event) {
+    'on before_publish' => function ($event)
+    {
         echo "before_publish!\n";
     },
-    'on after_publish' => function ($event) {
+    'on after_publish'  => function ($event)
+    {
         echo "after_publish!\n";
     },
 ];

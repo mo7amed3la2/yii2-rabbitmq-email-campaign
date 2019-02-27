@@ -1,6 +1,5 @@
 # phpstorm project files
 .idea
-.composer
 
 # netbeans project files
 nbproject
@@ -29,4 +28,6 @@ phpunit.phar
 
 tests/_output/*
 tests/_support/_generated
-/build/
+
+#vagrant folder
+/.vagrant
