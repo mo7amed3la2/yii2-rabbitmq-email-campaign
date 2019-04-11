@@ -2,7 +2,7 @@
 
 return [
     'class'             => \mikemadisonweb\rabbitmq\Configuration::class,
-    'auto_declare'      => false,
+    //'auto_declare'      => false,
     'connections'       => [
         [
             'host'      => 'rabbitmq',

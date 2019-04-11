@@ -12,6 +12,7 @@ RUN apt-get -yq update \
         php7.0-bcmath \
         php7.0-mbstring \
         php7.0-dom \
+        php7.0-zip \
         php-xdebug \
         wget \
         git \
