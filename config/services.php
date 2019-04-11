@@ -3,6 +3,6 @@
 return [
     'definitions' => [],
     'singletons' => [
-        'rabbitmq.import-data.consumer' =>  \app\components\rabbitmq\ImportDataConsumer::class,
+        'rabbitmq.example.consumer' =>  \app\components\rabbitmq\ImportDataConsumer::class,
     ],
 ];

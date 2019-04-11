@@ -15,40 +15,40 @@ return [
     ],
     'exchanges'         => [
         [
-            'name' => 'import',
-            'type' => 'fanout',
+            'name' => 'exchange-name',
+            'type' => 'direct',
         ],
     ],
     'queues'            => [
         [
-            'name'    => 'import',
+            'name'    => 'queue-name',
             'durable' => true,
         ],
         [
-            'name'    => 'import2',
+            'name'    => 'queue-name2',
             'durable' => true,
         ],
         [
-            'name'    => 'import3',
+            'name'    => 'queue-name3',
             'durable' => true,
         ],
     ],
     'bindings'          => [
         [
-            'queue'    => 'import',
-            'exchange' => 'import',
+            'queue'    => 'queue-name',
+            'exchange' => 'exchange-name',
         ],
     ],
     'producers'         => [
         [
-            'name' => 'import',
+            'name' => 'producer-name',
         ],
     ],
     'consumers'         => [
         [
-            'name'      => 'import',
+            'name'      => 'consumer-name',
             'callbacks' => [
-                'import' => 'rabbitmq.import-data.consumer',
+                'queue-name' => 'rabbitmq.example.consumer',
             ],
         ],
     ],

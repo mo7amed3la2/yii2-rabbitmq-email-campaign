@@ -15,12 +15,12 @@ update:
 	@docker exec -it yii2-rabbitmq-test_php_1 composer update
 
 publish:
-	@$(call PRINT_INFO, "Yii: Publish to import queue")
+	@$(call PRINT_INFO, "Yii: Publish")
 	@docker exec -it --user 1000 yii2-rabbitmq-test_php_1 php yii send-msg/publish
 
 consume:
-	@$(call PRINT_INFO, "Yii: Consume import queue")
-	@docker exec -it --user 1000 yii2-rabbitmq-test_php_1 php yii rabbitmq/consume import
+	@$(call PRINT_INFO, "Yii: Consume")
+	@docker exec -it --user 1000 yii2-rabbitmq-test_php_1 php yii rabbitmq/consume consumer-name
 
 #------------------------------------------------------------------------------
 # VARS
