@@ -3,6 +3,7 @@
 return [
     'definitions' => [],
     'singletons' => [
-        'rabbitmq.example.consumer' =>  \app\components\rabbitmq\ImportDataConsumer::class,
+        'rabbitmq.consumer-new-campaign' =>  \app\components\rabbitmq\ImportCompaginDataConsumer::class,
+        'rabbitmq.consumer-email-campaign' =>  \app\components\rabbitmq\SendEmailCompaginDataConsumer::class,
     ],
 ];

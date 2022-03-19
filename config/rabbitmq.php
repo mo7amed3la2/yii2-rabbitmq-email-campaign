@@ -1,71 +1,68 @@
 <?php
 
 return [
-    'class'             => \mikemadisonweb\rabbitmq\Configuration::class,
-    //'auto_declare'      => false,
-    'connections'       => [
+    'class' => \mikemadisonweb\rabbitmq\Configuration::class,
+    //'auto_declare'=> false,
+    'connections' => [
         [
-            'host'      => 'rabbitmq',
-            'port'      => '5672',
-            'user'      => 'rabbitmq',
-            'password'  => 'rabbitmq',
-            'vhost'     => '/',
+            'host' => 'localhost',
+            'port' => '5672',
+            'user' => 'guest',
+            'password'  => 'guest',
+            'vhost' => '/',
             'heartbeat' => 0,
         ],
     ],
-    'exchanges'         => [
+    'exchanges' => [
         [
-            'name' => 'exchange-name',
+            'name' => 'new-campaign',
+            'type' => 'direct',
+        ],
+        [
+            'name' => 'send-mail-campaign',
             'type' => 'direct',
         ],
     ],
-    'queues'            => [
+    'queues' => [
         [
-            'name'    => 'queue-name',
+            'name' => 'queue-new-campaign',
             'durable' => true,
         ],
         [
-            'name'    => 'queue-name2',
-            'durable' => true,
-        ],
-        [
-            'name'    => 'queue-name3',
+            'name' => 'queue-mail-campaign',
             'durable' => true,
         ],
     ],
-    'bindings'          => [
+    'bindings' => [
         [
-            'queue'    => 'queue-name',
-            'exchange' => 'exchange-name',
+            'queue' => 'queue-new-campaign',
+            'exchange' => 'new-campaign',
+        ],
+        [
+            'queue' => 'queue-mail-campaign',
+            'exchange' => 'send-mail-campaign',
         ],
     ],
-    'producers'         => [
+    'producers' => [
         [
-            'name' => 'producer-name',
+            'name' => 'campaign',
+        ],
+        [
+            'name' => 'send-mail',
         ],
     ],
-    'consumers'         => [
+    'consumers' => [
         [
-            'name'      => 'consumer-name',
+            'name' => 'consumer-campaign',
             'callbacks' => [
-                'queue-name' => 'rabbitmq.example.consumer',
+                'queue-new-campaign' => 'rabbitmq.consumer-new-campaign',
+            ],
+        ],
+        [
+            'name' => 'consumer-email',
+            'callbacks' => [
+                'queue-mail-campaign' => 'rabbitmq.consumer-email-campaign',
             ],
         ],
     ],
-    'on before_consume' => function ($event)
-    {
-        echo "before_consume!\n";
-    },
-    'on after_consume'  => function ($event)
-    {
-        echo "after_consume!\n";
-    },
-    'on before_publish' => function ($event)
-    {
-        echo "before_publish!\n";
-    },
-    'on after_publish'  => function ($event)
-    {
-        echo "after_publish!\n";
-    },
 ];

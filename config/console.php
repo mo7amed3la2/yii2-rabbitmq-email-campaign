@@ -12,6 +12,7 @@ $config = [
 		'@bower' => '@vendor/bower-asset',
 		'@npm'   => '@vendor/npm-asset',
 		'@tests' => '@app/tests',
+		'@upload' => '@app/web/uploads',
 	],
 	'components'          => [
 		'cache'    => [
@@ -39,8 +40,17 @@ $config = [
 	*/
 ];
 
-if (YII_ENV_DEV)
-{
+
+$config['components']['mailer']['transport'] = [
+	'class' => 'Swift_SmtpTransport',
+	'host' => 'localhost',
+	'port' => 1025,
+	'username' => null,
+	'password' => null,
+	'encryption' => false,
+];
+
+if (YII_ENV_DEV) {
 	// configuration adjustments for 'dev' environment
 	$config['bootstrap'][]    = 'gii';
 	$config['modules']['gii'] = [

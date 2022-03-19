@@ -1,5 +1,8 @@
 <?php
 
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
+
 $params = require __DIR__ . '/params.php';
 $db     = require __DIR__ . '/db.php';
 
@@ -12,6 +15,14 @@ $config = [
 		'@npm'   => '@vendor/npm-asset',
 	],
 	'components' => [
+		'fileStorage' => [
+			'class' => 'trntv\filekit\Storage',
+			'baseUrl' => '@web/uploads',
+			'filesystem' => function () {
+				$adapter = new Local('uploads');
+				return new Filesystem($adapter);
+			}
+		],
 		'request'      => [
 			// !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
 			'cookieValidationKey' => '-xXOY3VE_XGQ1P_eG82Dy3e51w1nhn0k',
@@ -26,13 +37,6 @@ $config = [
 		'errorHandler' => [
 			'errorAction' => 'site/error',
 		],
-		'mailer'       => [
-			'class'            => 'yii\swiftmailer\Mailer',
-			// send all mails to a file by default. You have to set
-			// 'useFileTransport' to false and configure a transport
-			// for the mailer to send real emails.
-			'useFileTransport' => true,
-		],
 		'log'          => [
 			'traceLevel' => YII_DEBUG ? 3 : 0,
 			'targets'    => [
@@ -44,21 +48,27 @@ $config = [
 		],
 		'db'           => $db,
 		'rabbitmq'     => require(__DIR__ . '/rabbitmq.php'),
-		/*
 		'urlManager' => [
 			'enablePrettyUrl' => true,
 			'showScriptName' => false,
 			'rules' => [
 			],
 		],
-		*/
 	],
 	'container'  => require(__DIR__ . '/services.php'),
 	'params'     => $params,
 ];
 
-if (YII_ENV_DEV)
-{
+$config['components']['mailer']['transport'] = [
+	'class' => 'Swift_SmtpTransport',
+	'host' => 'localhost',
+	'port' => 1025,
+	'username' => null,
+	'password' => null,
+	'encryption' => false,
+];
+
+if (YII_ENV_DEV) {
 	// configuration adjustments for 'dev' environment
 	$config['bootstrap'][]      = 'debug';
 	$config['modules']['debug'] = [
